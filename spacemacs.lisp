@@ -276,3 +276,31 @@ layers configuration. You are free to put any user code.")
  ;; If there is more than one, they won't work right.
  '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
  '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
+;;Latex
+(setq org-latex-create-formula-image-program 'dvipng)
+(setq org-latex-create-formula-image-program 'imagemagick)
+;;UTF-8 in Emacs: Everywhere, Forever
+(setq locale-coding-system 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+(when (display-graphic-p)
+  (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+
+
+(setq org-confirm-babel-evaluate nil)   ;don't prompt me to confirm everytime I want to evaluate a block
+
+;;; display/update images in the buffer after I evaluate
+(add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
+(setq max-specpdl-size 5)  ; default is 1000, reduce the backtrace level
+
+;; ソースコードを書き出すコマンド
+(defun org-babel-tangle-and-execute ()
+  (interactive)
+  (org-babel-tangle)
+  (org-babel-execute-buffer)
+  (org-display-inline-images))
+(define-key org-mode-map (kbd "C-c C-v C-m") 'org-babel-tangle-and-execute)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(remove-hook 'python-mode-hook 'spacemacs//init-eldoc-python-mode)
