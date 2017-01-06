@@ -26,11 +26,15 @@ values."
      auto-completion
      ;; better-defaults
      emacs-lisp
+     scheme
      git
      markdown
      c-c++
+     deft
      org
      ess
+     octave
+     clojure
      python
      ipython-notebook
      osx
@@ -48,7 +52,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages then consider to create a layer, you can also put the
    ;; configuration in `dotspacemacs/config'.
-   dotspacemacs-additional-packages '(chinese-fonts-setup cdlatex)
+   dotspacemacs-additional-packages '(chinese-fonts-setup cdlatex ob-ipython dash s f company-math)
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
@@ -214,6 +218,10 @@ layers configuration. You are free to put any user code.")
  'org-babel-load-languages
  '((emacs-lisp . t)
    (R . t)
+   (octave . t)
+   (sh . t)
+   (clojure . t)
+   (scheme . t)
    (python . t)
    (latex . t)))
 ;; Clocking work timeOrg mode allows you to clock the time you spend on specific tasks in a project. When you start working on an item, you can start the clock. When you stop working on that task, or when you mark the task done, the clock is stopped and the corresponding time interval is recorded. It also computes the total time spent on each subtree1 of a project. And it remembers a history or tasks recently clocked, so that you can jump quickly between a number of tasks absorbing your time.To save the clock history across Emacs sessions, use
@@ -237,12 +245,14 @@ layers configuration. You are free to put any user code.")
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-color-faces-vector
+   [default bold shadow italic underline bold bold-italic bold])
  '(ansi-color-names-vector
    ["#3F3F3F" "#CC9393" "#7F9F7F" "#F0DFAF" "#8CD0D3" "#DC8CC3" "#93E0E3" "#DCDCCC"])
- '(custom-enabled-themes (quote (sanityinc-tomorrow-night)))
+ '(custom-enabled-themes (quote (sanityinc-solarized-dark)))
  '(custom-safe-themes
    (quote
-    ("06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" default)))
+    ("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" default)))
  '(fci-rule-color "#383838" t)
  '(nrepl-message-colors
    (quote
@@ -304,3 +314,34 @@ layers configuration. You are free to put any user code.")
 (define-key org-mode-map (kbd "C-c C-v C-m") 'org-babel-tangle-and-execute)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (remove-hook 'python-mode-hook 'spacemacs//init-eldoc-python-mode)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add-to-list 'org-structure-template-alist
+             '("sp" "#+BEGIN_SRC python :results output \n\n#+END_SRC")
+)
+(add-to-list 'org-structure-template-alist
+             '("si" "#+BEGIN_SRC ipython :session :results output :exports both  \n\n#+END_SRC")
+             )
+(add-to-list 'org-structure-template-alist
+             '("sif" "#+BEGIN_SRC ipython :session :file /tmp/image.png :exports both \n\n#+END_SRC")
+             )
+;;;;;;;;;;;;;;;;;;;;
+(defun narrow-to-region-indirect (start end)
+  "Restrict editing in this buffer to the current region, indirectly."
+  (interactive "r")
+  (deactivate-mark)
+  (let ((buf (clone-indirect-buffer nil nil)))
+    (with-current-buffer buf
+      (narrow-to-region start end))
+    (switch-to-buffer buf)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;ess;;;;;;;;;;;;;
+(setq-default dotspacemacs-configuration-layers '((ess :variables
+                                                       ess-enable-smart-equals t)))
+;;;;;;;auto-complete印度人 github
+;(defun iqbal-org-enable-company-mode ()
+;  (add-hook 'completion-at-point-functions 'pcomplete-completions-at-point nil t))
+
+;(add-hook 'org-mode-hook #'iqbal-org-enable-company-mode)
+;;;子龙山人
+;(setq-default powerline-default-separator 'arrow)
+;;;;;; org-mode campany
+(setq company-math-allow-latex-symbols-in-faces t)
